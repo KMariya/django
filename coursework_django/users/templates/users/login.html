@@ -1,0 +1,71 @@
+{% load static tailwind_tags %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    {% tailwind_css %}
+
+</head>
+<body>
+<header>
+    <div class="flex items-center px-8">
+        <a><img src="{% static 'img/rb.svg' %}" alt="food"></a>
+
+        <nav class="text-xl ml-auto">
+            <ul class=" flex flex-row gap-8">
+                <li>
+                    <a href="{% url 'index' %}">Главная</a>
+                </li>
+                <li>
+                    <a href="{% url 'news' %}">Новости</a>
+                </li>
+                <li>
+                    <a href="{% url 'rest' %}">Рестораны</a>
+                </li>
+                <li>
+                    <a href="{% url 'polls' %}">Опросы</a>
+                </li>
+                <li>
+                    <a href="{% url 'form' %}">Свяжитесь с нами</a>
+                </li>
+                <li>
+                    <a href="{% url 'login' %}">Войти</a>
+                </li>
+                <li>
+                    <a href="{% url 'signup' %}">Регистрация</a>
+                </li>
+
+            </ul>
+        </nav>
+    </div>
+</header>
+<main class="flex mt-8">
+    {% if messages %}
+    <div>
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}"
+             {% endif %}>
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div class="flex flex-col mx-auto">
+        <h1 class="text-3xl mb-12 m-auto font-bold">Вход</h1>
+        <div class="">
+            <form class="flex flex-col gap-8 text-2xl" method="POST" novalidate>
+                {% csrf_token %}
+                {{form.as_p}}
+                <input type="submit" value="Войти" style="background-color: #fffafa; border: 3px solid black; border-radius: 6px; cursor: pointer; width: auto; padding: 4px 8px; margin: auto;  "/>
+            </form>
+        </div>
+    </div>
+
+
+</main>
+</body>
+</html>

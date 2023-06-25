@@ -1,0 +1,77 @@
+{% load static tailwind_tags %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Coursework</title>
+    {% tailwind_css %}
+    <style scoped>
+        .main-bg {
+            background-image: url({% static 'img/rest1.jpg' %});
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: 10%;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="flex items-center px-8 text-sans">
+        <a><img src="{% static 'img/rb.svg' %}" alt="food"></a>
+
+        <nav class="text-xl ml-auto">
+            <ul class=" flex flex-row gap-8">
+                <li>
+                    <a href="{% url 'index' %}">Главная</a>
+                </li>
+                <li>
+                    <a href="{% url 'news' %}">Новости</a>
+                </li>
+                <li>
+                    <a href="{% url 'rest' %}">Рестораны</a>
+                </li>
+                <li>
+                    <a href="{% url 'polls' %}">Опросы</a>
+                </li>
+                <li>
+                    <a href="{% url 'form' %}">Свяжитесь с нами</a>
+                </li>
+                {%if not request.user.is_authenticated %}
+                <li>
+                    <a href="{% url 'login' %}">Войти</a>
+                </li>
+                <li>
+                    <a href="{% url 'signup' %}">Регистрация</a>
+                </li>
+                {%endif%}
+                {%if request.user.is_authenticated %}
+                <li>{{ request.user.username }}</li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+                {%endif%}
+
+            </ul>
+        </nav>
+    </div>
+</header>
+<main>
+    <div class="h-screen flex flex-col">
+        <div class="flex main-bg flex-1">
+            <div class="leading-normal mt-60 ml-32 text-slate-200 text-2xl">
+                <p style="letter-spacing: 2px" class="font-semibold text-3xl mb-16">Добро пожаловать в наш ресторанный
+                    блог !</p>
+                <p class="mb-20">Здесь вы найдете самые свежие новости из индустрии ресторанов, обзоры и рекомендации
+                    <br> по
+                    лучшим заведениям с отзывами посетителей. И, конечно же, не пропустите наши <br> захватывающие
+                    опросы, где вы сможете выразить свое мнение о различных аспектах ресторанного мира. </p>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

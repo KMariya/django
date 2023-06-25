@@ -1,0 +1,84 @@
+{% load static tailwind_tags %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Новости</title>
+    {% tailwind_css %}
+</head>
+<body>
+<header>
+    <div class="flex items-center px-8">
+        <a><img src="{% static 'img/rb.svg' %}" alt=""></a>
+
+        <nav class="text-xl ml-auto">
+            <ul class=" flex flex-row gap-8">
+                <li>
+                    <a href="{% url 'index' %}">Главная</a>
+                </li>
+                <li>
+                    <a href="{% url 'news' %}">Новости</a>
+                </li>
+                <li>
+                    <a href="{% url 'rest' %}">Рестораны</a>
+                </li>
+                <li>
+                    <a href="{% url 'polls' %}">Опросы</a>
+                </li>
+                <li>
+                    <a href="{% url 'form' %}">Свяжитесь с нами</a>
+                </li>
+                {%if not request.user.is_authenticated %}
+                <li>
+                    <a href="{% url 'login' %}">Войти</a>
+                </li>
+                <li>
+                    <a href="{% url 'signup' %}">Регистрация</a>
+                </li>
+                {%endif%}
+                {%if request.user.is_authenticated %}
+                <li>{{ request.user.username }}</li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+                {%endif%}
+
+            </ul>
+        </nav>
+    </div>
+</header>
+<main>
+    <div class="container my-2 px-6 mx-auto">
+
+        <div class="mb-32 text-gray-800 text-center md:text-left">
+            <h2 class="text-3xl font-bold mb-12 text-center">Новости</h2>
+            {% for news in newss %}
+            <div class="flex flex-wrap mb-6">
+                <div class="grow-0 shrink-0 basis-auto w-full md:w-3/12 px-3 mb-6 md:mb-0 ml-auto">
+                    <div
+                            class="relative overflow-hidden bg-no-repeat bg-cover relative overflow-hidden bg-no-repeat bg-cover ripple shadow-lg rounded-lg mb-6"
+                            data-mdb-ripple="true" data-mdb-ripple-color="light">
+                        {% if news.image %}
+                        <img src="{{ news.image.url }}" alt="{{ news.title }}">
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="grow-0 shrink-0 basis-auto w-full md:w-9/12 xl:w-7/12 px-3 mb-6 md:mb-0 mr-auto">
+                    <h5 class="text-lg font-bold mb-3">{{ news.title }}</h5>
+                    <p class="text-gray-500">
+                        {{ news.text|linebreaksbr }}
+                    </p>
+                    <p class="mt-5 font-light text-gray-500 mb-6">Published {{ news.published_date }}</p>
+                </div>
+
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+</main>
+</body>
+</html>

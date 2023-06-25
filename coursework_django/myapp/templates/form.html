@@ -1,0 +1,66 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Обратная связь</title>
+    {% tailwind_css %}
+</head>
+<body>
+<header>
+    <div class="flex items-center px-8">
+        <a><img src="{% static 'img/rb.svg' %}" alt="food"></a>
+
+        <nav class="text-xl ml-auto">
+            <ul class=" flex flex-row gap-8">
+                <li>
+                    <a href="{% url 'index' %}">Главная</a>
+                </li>
+                <li>
+                    <a href="{% url 'news' %}">Новости</a>
+                </li>
+                <li>
+                    <a href="{% url 'rest' %}">Рестораны</a>
+                </li>
+                <li>
+                    <a href="{% url 'polls' %}">Опросы</a>
+                </li>
+                <li>
+                    <a href="{% url 'form' %}">Свяжитесь с нами</a>
+                </li>
+                {%if not request.user.is_authenticated %}
+                <li>
+                    <a href="{% url 'login' %}">Войти</a>
+                </li>
+                <li>
+                    <a href="{% url 'signup' %}">Регистрация</a>
+                </li>
+                {%endif%}
+                {%if request.user.is_authenticated %}
+                <li>{{ request.user.username }}</li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+                {%endif%}
+
+            </ul>
+        </nav>
+    </div>
+</header>
+<main class="flex mt-8">
+    <div class="flex flex-col mx-auto">
+        <h1 class="text-3xl mb-12 m-auto font-bold">Мы стремимся сделать наш блог полезным и интересным для наших читателей.
+            <br> Если у вас есть отзывы, предложения или просто хотите поблагодарить нас, <br> пожалуйста, оставьте обратную связь.</h1>
+        <div class="flex flex-col mx-auto">
+            <form class="flex flex-col gap-8 text-2xl" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button style="background-color: #fffafa; border: 3px solid black; border-radius: 6px; cursor: pointer; width: auto; padding: 4px 8px; margin: auto;  "
+                        type="submit">Отправить
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+</main>
+</body>
+</html>

@@ -1,0 +1,176 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Рестораны</title>
+    {% tailwind_css %}
+</head>
+<body>
+<header>
+    <div class="flex items-center px-8">
+        <a><img src="{% static 'img/rb.svg' %}" alt="food"></a>
+
+        <nav class="text-xl ml-auto">
+            <ul class=" flex flex-row gap-8">
+                <li>
+                    <a href="{% url 'index' %}">Главная</a>
+                </li>
+                <li>
+                    <a href="{% url 'news' %}">Новости</a>
+                </li>
+                <li>
+                    <a href="{% url 'rest' %}">Рестораны</a>
+                </li>
+                <li>
+                    <a href="{% url 'polls' %}">Опросы</a>
+                </li>
+                <li>
+                    <a href="{% url 'form' %}">Свяжитесь с нами</a>
+                </li>
+                {%if not request.user.is_authenticated %}
+                <li>
+                    <a href="{% url 'login' %}">Войти</a>
+                </li>
+                <li>
+                    <a href="{% url 'signup' %}">Регистрация</a>
+                </li>
+                {%endif%}
+                {%if request.user.is_authenticated %}
+                <li>{{ request.user.username }}</li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+                {%endif%}
+
+            </ul>
+        </nav>
+    </div>
+</header>
+<main>
+    <div class="container my-2 px-6 mx-auto">
+
+        <section class="mb-14 text-gray-800 text-center md:text-left">
+            <h2 class="text-3xl font-bold mb-12 text-center">Рестораны</h2>
+            {% for rest in rests %}
+            <div class="mb-6" style="background-color: #f4f4f4; padding: 40px; border-radius: 9px">
+
+
+                <div class="mb-6 md:mb-0 bg-white rounded-lg p-3 shadow-lg mb-4 border-2 text-xl " style="border: 3px solid #d43d3d;">
+                    <h3 class="text-2xl font-bold mb-3">{{ rest.title }}</h3>
+                    <p>
+                        {{ rest.text|linebreaksbr }}
+                    </p>
+
+
+                </div>
+
+
+                <div>
+
+                    <div class="rounded-b-lg">
+                        <div id="task-comments" class="pt-2">
+                            {% for comment in rest.comment_set.all %}
+
+                            <div class="bg-white rounded-lg p-3  flex flex-col  shadow-lg mb-4 text-xl">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <p class="bg-gray-50 p-2 rounded-lg font-bold underline">
+                                        Автор: {{ comment.author }}</p>
+                                    <p> {{ comment.created_at }}</p>
+                                </div>
+                                <p style="width: 90%" class="text-gray-600 text-lg text-center md:text-left text-xl">
+                                    {{comment.content}}
+                                </p>
+                            </div>
+                            {% empty %}
+                            <p class="text-xl text-center md:text-left mb-3">Нет комментариев</p>
+                            {% endfor %}
+                        </div>
+
+                        {%if not request.user.is_authenticated %}
+                        <p class="text-orange-700 text-xl">Авторизуйтесь, чтобы оставить комменатрий</p>
+                        {%endif%}
+
+                        {%if request.user.is_authenticated %}
+
+                        <form class="flex gap-5" action="{% url 'comment_submit' %}" accept-charset="UTF-8"
+                              method="POST">
+                            <input type="hidden" name="post_id" value="{{ rest.id }}">
+                            {% csrf_token %}
+                            <input required name="comment_content"
+                                   class="w-full p-2 border-2  rounded-lg text-xl focus:border-orange-300 focus:ring-orange-200"
+                                   placeholder="Введите комментарий" id="comment_content"
+                                   spellcheck="false">
+                            <button class="font-bold w-44  bg-orange-400 text-lg text-white shadow-md rounded-lg ">
+                                Отправить
+                            </button>
+
+                        </form>
+                        {%endif%}
+
+                    </div>
+
+                </div>
+            </div>
+            {% endfor %}
+
+
+        </section>
+        <!--        <section class="mb-14 text-gray-800 text-center md:text-left">-->
+        <!--            <div class="grid md:grid-cols-2 gap-x-6 xl:gap-x-12 items-center mb-3.5">-->
+        <!--                <div class="mb-6 md:mb-0">-->
+        <!--                    <div-->
+        <!--                            class="relative overflow-hidden bg-no-repeat bg-cover relative overflow-hidden bg-no-repeat bg-cover ripple shadow-lg rounded-lg"-->
+        <!--                            data-mdb-ripple="true" data-mdb-ripple-color="light">-->
+        <!--                        <img src="https://mdbootstrap.com/img/new/standard/city/018.jpg"-->
+        <!--                             class="w-full" alt="Louvre"/>-->
+        <!--                        <a href="#!">-->
+        <!--                            <div-->
+        <!--                                    class="absolute top-0 right-0 bottom-0 left-0 w-full h-full overflow-hidden bg-fixed opacity-0 hover:opacity-100 transition duration-300 ease-in-out"-->
+        <!--                                    style="background-color: rgba(251, 251, 251, 0.2)"></div>-->
+        <!--                        </a>-->
+        <!--                    </div>-->
+        <!--                </div>-->
+        <!--                <div class="mb-6 md:mb-0">-->
+        <!--                    <h3 class="text-2xl font-bold mb-3">Tekhnikum</h3>-->
+        <!--                    <p class="text-gray-500">-->
+        <!--                        Ut pretium ultricies dignissim. Sed sit amet mi eget urna-->
+        <!--                        placerat vulputate. Ut vulputate est non quam dignissim-->
+        <!--                        elementum. Donec a ullamcorper diam.-->
+        <!--                    </p>-->
+
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--            <div>-->
+
+        <!--                <section class="rounded-b-lg ">-->
+
+        <!--                    <form class="flex gap-5" action="/" accept-charset="UTF-8" method="post"><input type="hidden">-->
+        <!--                        <input class="w-full p-2 border-2  rounded-lg text-xl focus:border-orange-300 focus:ring-orange-200"-->
+        <!--                               placeholder="Введите комментарий" id="comment_content"-->
+        <!--                               spellcheck="false">-->
+        <!--                        <button class="font-bold w-44  bg-orange-400 text-lg text-white shadow-md rounded-lg ">Отправить-->
+        <!--                        </button>-->
+        <!--                    </form>-->
+
+        <!--                    <div id="task-comments" class="pt-2">-->
+
+        <!--                        <div-->
+        <!--                                class="bg-white rounded-lg p-3  flex flex-col justify-center items-center md:items-start shadow-lg mb-4">-->
+        <!--                            <div class="flex flex-row justify-center mr-2">-->
+
+        <!--                                <h3 class="text-orange-700 font-semibold text-lg text-center md:text-left ">Мария</h3>-->
+        <!--                            </div>-->
+        <!--                            <p style="width: 90%" class="text-gray-600 text-lg text-center md:text-left ">Хороший-->
+        <!--                                ресторан </p>-->
+        <!--                        </div>-->
+        <!--                    </div>-->
+        <!--                </section>-->
+
+        <!--            </div>-->
+
+
+        <!--        </section>-->
+
+    </div>
+</main>
+</body>
+</html>
