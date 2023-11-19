@@ -1,5 +1,5 @@
 {% load static tailwind_tags %}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -59,7 +59,7 @@
         <div class="">
             <form class="flex flex-col gap-8 text-2xl" method="POST" novalidate>
                 {% csrf_token %}
-                {{form.as_p}}
+                {{ form.as_p }}
                 <input type="submit" value="Войти" style="background-color: #fffafa; border: 3px solid black; border-radius: 6px; cursor: pointer; width: auto; padding: 4px 8px; margin: auto;  "/>
             </form>
         </div>

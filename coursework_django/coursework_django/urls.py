@@ -25,5 +25,5 @@ urlpatterns = [
     path('', include('users.urls')),
     path('', include('polls.urls')),
     path('api-auth/', include('rest_framework.urls')),
-    path('api/v1/', include('myapp.urls')),
+
 ]

@@ -24,7 +24,7 @@ def index(request):
 
 
 def login(request):
-    return render(request, 'login.html')
+    return render(request, 'users/login.html')
 
 
 def news(request):
@@ -44,7 +44,7 @@ def profile(request):
 
 
 def signup(request):
-    return render(request, 'signup.html')
+    return render(request, 'users/signup.html')
 
 
 def news(request):
@@ -66,7 +66,7 @@ def comment_submit(request):
         comment = Comment(post=post, author=request.user, content=comment_content, created_at=timezone.now())
         comment.save()
 
-        return HttpResponseRedirect('../rest')
+        return HttpResponseRedirect('/rest')
 
     return render(request, 'rest.html')
 
