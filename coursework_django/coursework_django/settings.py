@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'myapp',
     'users.apps.UsersConfig',
     'polls',
-
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
