@@ -14,11 +14,31 @@ from .serializers import NewsListSerializer
 from .serializers import RestListSerializer
 
 from django.db.models import Q
-
-
-class NewsListView(generics.ListAPIView):
+import django_filters
+class NewsFilter(django_filters.FilterSet):
     queryset = News.objects.all()
+    class Meta:
+        model = News
+        fields = ['author', 'title', 'text', 'created_date', 'published_date']
+class NewsListView(generics.ListAPIView):
     serializer_class = NewsListSerializer
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_class = NewsFilter
+
+    def get_queryset(self):
+        """
+        возвращает список всех новостей,
+        относящихся к текущему аутентифицированному пользователю.
+        """
+        user = self.request.user
+
+        # Проверка, аутентифицирован ли пользователь
+        if user.is_authenticated:
+            return News.objects.filter(author=user).order_by('-created_date')
+        else:
+            # Если пользователь не аутентифицирован, возвращайте пустой набор
+            return News.objects.none()
+
 
 class RestListView(generics.ListAPIView):
     queryset = Rest.objects.all()
@@ -44,11 +64,7 @@ def signup(request):
 
 
 def news(request):
-
-    newss = News.objects.filter(
-        Q(title__startswith='В') & (Q(text__contains='ужин') | Q(text__contains='рестораны')) & ~Q(text__contains='место'),
-        published_date__lte=timezone.now()
-    ).order_by('-published_date')
+    newss = News.objects.all().order_by('-created_date')
     return render(request, 'News.html', {'newss': newss})
 
 def create_news(request):
@@ -62,14 +78,6 @@ def create_news(request):
 
     return render(request, 'create_news.html', {'form': form})
 
-# def news(request):
-#     newss = News.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
-#     return render(request, 'News.html', {'newss': newss})
-
-
-# def rest(request):
-#     rests = Rest.objects.all().prefetch_related('comment_set')
-#     return render(request, 'Rest.html', {'rests': rests})
 
 def rest(request):
     rests = Rest.objects.filter(

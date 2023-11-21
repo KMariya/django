@@ -3,14 +3,16 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
+from simple_history.models import HistoricalRecords
 
 class News(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images/', null=True)
     title = models.CharField(max_length=200)
     text = models.TextField()
-    created_date = models.DateTimeField(default=timezone.now)
+    created_date = models.DateTimeField(null=True, blank=True, default=timezone.now)
     published_date = models.DateTimeField(blank=True, null=True)
+    history = HistoricalRecords()
 
     def publish(self):
         self.published_date = timezone.now()
@@ -25,6 +27,7 @@ class Rest(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     text = models.TextField()
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.title

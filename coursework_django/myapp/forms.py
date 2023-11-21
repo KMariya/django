@@ -10,7 +10,7 @@ class ContactForm(forms.ModelForm):
 class NewsForm(forms.ModelForm):
     class Meta:
         model = News
-        fields = ['author', 'title', 'text', 'created_date']
+        fields = ['author', 'title', 'text', 'created_date', 'published_date']
 
     def clean_text(self):
 
