@@ -7,33 +7,22 @@ from .models import News
 from .models import Rest
 from .models import Comment
 from .forms import ContactForm
+from .forms import NewsForm
 
 from rest_framework import generics
-# from rest_framework.response import Response
-# from rest_framework.views import APIView
 from .serializers import NewsListSerializer
 from .serializers import RestListSerializer
 
-# class NewsListView(APIView):
-#     def get(self, request):
-#         news = News.objects.all()
-#         serializer = NewsListSerializer(news, many=True)
-#         return Response(serializer.data)
+from django.db.models import Q
+
 
 class NewsListView(generics.ListAPIView):
     queryset = News.objects.all()
     serializer_class = NewsListSerializer
 
-# class RestListView(APIView):
-#     def get(self, request):
-#         rest = News.objects.all()
-#         serializer = RestListSerializer(rest, many=True)
-#         return Response(serializer.data)
-
 class RestListView(generics.ListAPIView):
     queryset = Rest.objects.all()
     serializer_class = RestListSerializer
-
 
 def index(request):
     return render(request, 'index.html')
@@ -41,15 +30,6 @@ def index(request):
 
 def login(request):
     return render(request, 'users/login.html')
-
-
-def news(request):
-    return render(request, 'news.html')
-
-
-def rest(request):
-    return render(request, 'rest.html')
-
 
 def recipes(request):
     return render(request, 'recipes.html')
@@ -64,12 +44,38 @@ def signup(request):
 
 
 def news(request):
-    newss = News.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
+
+    newss = News.objects.filter(
+        Q(title__startswith='В') & (Q(text__contains='ужин') | Q(text__contains='рестораны')) & ~Q(text__contains='место'),
+        published_date__lte=timezone.now()
+    ).order_by('-published_date')
     return render(request, 'News.html', {'newss': newss})
 
+def create_news(request):
+    if request.method == 'POST':
+        form = NewsForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('news')
+    else:
+        form = NewsForm()
+
+    return render(request, 'create_news.html', {'form': form})
+
+# def news(request):
+#     newss = News.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
+#     return render(request, 'News.html', {'newss': newss})
+
+
+# def rest(request):
+#     rests = Rest.objects.all().prefetch_related('comment_set')
+#     return render(request, 'Rest.html', {'rests': rests})
 
 def rest(request):
-    rests = Rest.objects.all().prefetch_related('comment_set')
+    rests = Rest.objects.filter(
+        Q(text__icontains='Русская') | Q(text__icontains='Морепродукты') & ~Q(text__icontains='Японская')
+    ).prefetch_related('comment_set')
+
     return render(request, 'Rest.html', {'rests': rests})
 
 

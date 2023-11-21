@@ -3,6 +3,7 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import contact_view
+from .views import create_news
 
 urlpatterns = [
 
@@ -15,7 +16,8 @@ urlpatterns = [
     path('comment_submit', views.comment_submit, name='comment_submit'),
     path('form', contact_view, name='form'),
     path('news/api', views.NewsListView.as_view()),
-    path('rest/api', views.RestListView.as_view())
+    path('rest/api', views.RestListView.as_view()),
+    path('create/', create_news, name='create_news'),
 
 
 
