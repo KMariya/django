@@ -8,15 +8,31 @@ from .models import Rest
 from .models import Comment
 from .forms import ContactForm
 
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework import generics
+# from rest_framework.response import Response
+# from rest_framework.views import APIView
 from .serializers import NewsListSerializer
+from .serializers import RestListSerializer
 
-class NewsListView(APIView):
-    def get(self, request):
-        news = News.objects.all()
-        serializer = NewsListSerializer(news, many=True)
-        return Response(serializer.data)
+# class NewsListView(APIView):
+#     def get(self, request):
+#         news = News.objects.all()
+#         serializer = NewsListSerializer(news, many=True)
+#         return Response(serializer.data)
+
+class NewsListView(generics.ListAPIView):
+    queryset = News.objects.all()
+    serializer_class = NewsListSerializer
+
+# class RestListView(APIView):
+#     def get(self, request):
+#         rest = News.objects.all()
+#         serializer = RestListSerializer(rest, many=True)
+#         return Response(serializer.data)
+
+class RestListView(generics.ListAPIView):
+    queryset = Rest.objects.all()
+    serializer_class = RestListSerializer
 
 
 def index(request):

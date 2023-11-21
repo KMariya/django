@@ -14,6 +14,9 @@ urlpatterns = [
     path('login', views.login, name='login'),
     path('comment_submit', views.comment_submit, name='comment_submit'),
     path('form', contact_view, name='form'),
-    path('news/api', views.NewsListView.as_view())
+    path('news/api', views.NewsListView.as_view()),
+    path('rest/api', views.RestListView.as_view())
+
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
