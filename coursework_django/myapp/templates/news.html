@@ -53,6 +53,10 @@
 
         <div class="mb-32 text-gray-800 text-center md:text-left">
             <h2 class="text-3xl font-bold mb-12 text-center">Новости</h2>
+            <div style="margin-bottom: 40px">
+                <a href="{% url 'create_news' %}" style="background-color: #dfdfdf; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 18px">Создать новость</a>
+            </div>
+
             {% for news in newss %}
             <div class="flex flex-wrap mb-6">
                 <div class="grow-0 shrink-0 basis-auto w-full md:w-3/12 px-3 mb-6 md:mb-0 ml-auto">

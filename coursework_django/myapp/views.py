@@ -9,6 +9,9 @@ from .models import Comment
 from .forms import ContactForm
 from .forms import NewsForm
 
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework import generics
 from .serializers import NewsListSerializer
 from .serializers import RestListSerializer
@@ -43,6 +46,16 @@ class NewsListView(generics.ListAPIView):
 class RestListView(generics.ListAPIView):
     queryset = Rest.objects.all()
     serializer_class = RestListSerializer
+
+class RestListAllView(viewsets.ModelViewSet):
+    queryset = Rest.objects.all()
+    serializer_class = RestListSerializer
+
+    @action(detail=False, methods=['GET'])
+    def all(self, request):
+        queryset = self.queryset
+        serialized_data = self.get_serializer(queryset, many=True).data
+        return Response(serialized_data)
 
 def index(request):
     return render(request, 'index.html')
@@ -81,7 +94,7 @@ def create_news(request):
 
 def rest(request):
     rests = Rest.objects.filter(
-        Q(text__icontains='Русская') | Q(text__icontains='Морепродукты') & ~Q(text__icontains='Японская')
+        Q(text__icontains='Итальянская') | Q(text__icontains='веганов') & ~Q(text__icontains='Русская')
     ).prefetch_related('comment_set')
 
     return render(request, 'Rest.html', {'rests': rests})

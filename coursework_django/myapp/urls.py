@@ -4,6 +4,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from .views import contact_view
 from .views import create_news
+from .views import RestListView
+from .views import RestListAllView
 
 urlpatterns = [
 
@@ -17,7 +19,8 @@ urlpatterns = [
     path('form', contact_view, name='form'),
     path('news/api', views.NewsListView.as_view()),
     path('rest/api', views.RestListView.as_view()),
-    path('create/', create_news, name='create_news'),
+    path('create', create_news, name='create_news'),
+    path('rest/api/all', RestListAllView.as_view({'get': 'all'}), name='rest-all'),
 
 
 
