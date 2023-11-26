@@ -1,0 +1,60 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>create news</title>
+    {% tailwind_css %}
+</head>
+<body>
+<div class="flex items-center px-8">
+        <a><img src="{% static 'img/rb.svg' %}" alt=""></a>
+
+        <nav class="text-xl ml-auto">
+            <ul class=" flex flex-row gap-8">
+                <li>
+                    <a href="{% url 'index' %}">Главная</a>
+                </li>
+                <li>
+                    <a href="{% url 'news' %}">Новости</a>
+                </li>
+                <li>
+                    <a href="{% url 'rest' %}">Рестораны</a>
+                </li>
+                <li>
+                    <a href="{% url 'polls' %}">Опросы</a>
+                </li>
+                <li>
+                    <a href="{% url 'form' %}">Свяжитесь с нами</a>
+                </li>
+                {%if not request.user.is_authenticated %}
+                <li>
+                    <a href="{% url 'login' %}">Войти</a>
+                </li>
+                <li>
+                    <a href="{% url 'signup' %}">Регистрация</a>
+                </li>
+                {%endif%}
+                {%if request.user.is_authenticated %}
+                <li>{{ request.user.username }}</li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+                {%endif%}
+
+            </ul>
+        </nav>
+    </div>
+<div class="container my-2 px-6 mx-auto">
+    <h2 class="text-3xl font-bold mb-12 text-center">Создать новость</h2>
+    <div style="margin-bottom: 40px">
+        <a href="{% url 'news' %}" style="background-color: #dfdfdf; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 18px">Назад</a>
+    </div>
+    <form class="flex flex-col gap-8 text-2xl mb-32" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button style="background-color: #fffafa; border: 3px solid black; border-radius: 6px; cursor: pointer; width: auto; padding: 4px 8px; margin: auto;  "
+                        type="submit">Отправить
+                </button>
+    </form>
+</div>
+</body>
+</html>
