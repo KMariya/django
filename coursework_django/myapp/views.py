@@ -3,30 +3,30 @@ from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils import timezone
+from django.views.decorators.http import require_POST
+from rest_framework import status
 from .models import News
 from .models import Rest
 from .models import Comment
 from .forms import ContactForm
 from .forms import NewsForm
-
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import generics
-from .serializers import NewsListSerializer
+from .serializers import NewsListSerializer, RestCreateSerializer
 from .serializers import RestListSerializer
 
 from django.db.models import Q
 import django_filters
-class NewsFilter(django_filters.FilterSet):
-    queryset = News.objects.all()
-    class Meta:
-        model = News
-        fields = ['author', 'title', 'text', 'created_date', 'published_date']
+
 class NewsListView(generics.ListAPIView):
+    queryset = News.objects.all()
     serializer_class = NewsListSerializer
-    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
-    filterset_class = NewsFilter
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_fields = ['author', 'title', 'text', 'created_date', 'published_date']
 
     def get_queryset(self):
         """
@@ -43,6 +43,8 @@ class NewsListView(generics.ListAPIView):
             return News.objects.none()
 
 
+
+
 class RestListView(generics.ListAPIView):
     queryset = Rest.objects.all()
     serializer_class = RestListSerializer
@@ -52,10 +54,19 @@ class RestListAllView(viewsets.ModelViewSet):
     serializer_class = RestListSerializer
 
     @action(detail=False, methods=['GET'])
-    def all(self, request):
+    def get_custom(self, request):
         queryset = self.queryset
         serialized_data = self.get_serializer(queryset, many=True).data
         return Response(serialized_data)
+
+    @action(detail=True, methods=['POST'], serializer_class=RestCreateSerializer)
+    def create_custom(self, request, pk=None):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
 
 def index(request):
     return render(request, 'index.html')
@@ -77,7 +88,10 @@ def signup(request):
 
 
 def news(request):
-    newss = News.objects.all().order_by('-created_date')
+    newss = News.objects.filter(
+        Q(text__startswith='В') | Q(text__startswith='А') & ~Q(text__startswith='Н')
+    ).order_by('-created_date')
+
     return render(request, 'News.html', {'newss': newss})
 
 def create_news(request):
@@ -94,7 +108,7 @@ def create_news(request):
 
 def rest(request):
     rests = Rest.objects.filter(
-        Q(text__icontains='Итальянская') | Q(text__icontains='веганов') & ~Q(text__icontains='Русская')
+        Q(text__icontains='Итальянская') | Q(text__icontains='веганов') & ~Q(text__icontains='Гриль')
     ).prefetch_related('comment_set')
 
     return render(request, 'Rest.html', {'rests': rests})

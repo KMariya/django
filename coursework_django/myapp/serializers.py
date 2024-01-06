@@ -20,3 +20,8 @@ class RestListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rest
         fields = ('author', 'title', 'text')
+
+class RestCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rest
+        fields = '__all__'

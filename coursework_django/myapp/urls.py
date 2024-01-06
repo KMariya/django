@@ -1,11 +1,16 @@
 from django.urls import path, include
+from rest_framework import routers
+
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import contact_view
+from .views import contact_view, NewsListView
 from .views import create_news
-from .views import RestListView
 from .views import RestListAllView
+
+router = routers.DefaultRouter()
+router.register(r'rest', RestListAllView, basename='rest')
+
 
 urlpatterns = [
 
@@ -20,7 +25,9 @@ urlpatterns = [
     path('news/api', views.NewsListView.as_view()),
     path('rest/api', views.RestListView.as_view()),
     path('create', create_news, name='create_news'),
-    path('rest/api/all', RestListAllView.as_view({'get': 'all'}), name='rest-all'),
+    path('api/', include(router.urls))
+
+
 
 
 

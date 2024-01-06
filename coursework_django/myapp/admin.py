@@ -1,11 +1,12 @@
 from django.contrib import admin
+from django.utils.html import format_html
+
 from .models import News
 from .models import Rest
 from .models import Comment
 from .models import ContactMessage
 from import_export.admin import ImportExportModelAdmin
 from import_export import resources
-from .resources import NewsResource
 from .resources import RestResource
 
 class NewsResource(resources.ModelResource):
@@ -27,21 +28,29 @@ class NewsAdmin(ImportExportModelAdmin):
     list_display = ('id', 'author', 'image', 'title', 'text', 'created_date', 'published_date')
     list_filter = ['author', 'created_date']
     date_hierarchy = 'created_date'
+    raw_id_fields = ['author']
     def history_view(self, request, object_id, extra_context=None):
         extra_context = extra_context or {}
         extra_context['history_entries'] = News.objects.get(pk=object_id).history.all()
         return super().history_view(request, object_id, extra_context=extra_context)
 
+
+
 admin.site.register(News, NewsAdmin)
 
 class RestAdmin(ImportExportModelAdmin):
     resource_class = RestResource
-    list_display = ('id', 'author', 'title', 'text')
+    list_display = ('id', 'author', 'title', 'text', 'hyperlink_to_comments')
 
     def history_view(self, request, object_id, extra_context=None):
         extra_context = extra_context or {}
         extra_context['history_entries'] = Rest.objects.get(pk=object_id).history.all()
         return super().history_view(request, object_id, extra_context=extra_context)
+
+    def hyperlink_to_comments(self, obj):
+        return format_html('<a href="{}">Комментарии</a>', f'/admin/myapp/comment/?post__id__exact={obj.id}')
+
+    hyperlink_to_comments.short_description = 'Гиперссылка на комментарии'
 
 admin.site.register(Rest, RestAdmin)
 

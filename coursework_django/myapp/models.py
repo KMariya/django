@@ -6,6 +6,7 @@ from django.core.validators import RegexValidator
 from simple_history.models import HistoricalRecords
 
 class News(models.Model):
+    objects = None
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images/', null=True)
     title = models.CharField(max_length=200)
@@ -24,6 +25,7 @@ class News(models.Model):
 
 
 class Rest(models.Model):
+    objects = None
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     text = models.TextField()
